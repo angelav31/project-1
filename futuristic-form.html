@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nova ID | Apni details bharo</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060912;--cyan:#4de1ff;--violet:#8b5cff;--pink:#ff4fd8;--text:#e8f0ff;--mute:#8a97b8;--glass:rgba(16,22,46,.55)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:radial-gradient(circle at 20% 10%,#14183a,var(--bg) 60%);color:var(--text);font-family:'Space Grotesk',sans-serif;display:grid;place-items:center;padding:20px;overflow-x:hidden}
+#bg{position:fixed;inset:0;z-index:0}
+.card{position:relative;z-index:1;width:min(440px,100%);padding:34px 30px;border-radius:22px;background:var(--glass);backdrop-filter:blur(16px);border:1px solid rgba(77,225,255,.25);box-shadow:0 0 60px rgba(139,92,255,.25),inset 0 0 30px rgba(77,225,255,.05);animation:rise 1s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(40px) scale(.96)}}
+.orb{position:relative;width:110px;height:110px;margin:0 auto 18px}
+.orb svg{position:absolute;inset:0;width:100%;height:100%}
+.ring{transform-origin:55px 55px;fill:none;stroke-width:1.5}
+.r1{stroke:var(--cyan);stroke-dasharray:30 18;animation:spin 8s linear infinite}
+.r2{stroke:var(--violet);stroke-dasharray:6 10;animation:spin 12s linear infinite reverse}
+.prog{fill:none;stroke:var(--pink);stroke-width:4;stroke-linecap:round;stroke-dasharray:302;stroke-dashoffset:302;transform:rotate(-90deg);transform-origin:55px 55px;transition:stroke-dashoffset .6s ease;filter:drop-shadow(0 0 6px var(--pink))}
+@keyframes spin{to{transform:rotate(360deg)}}
+.core{position:absolute;inset:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--cyan) 30%,var(--violet) 75%);box-shadow:0 0 30px var(--cyan);animation:pulse 3s ease-in-out infinite;display:grid;place-items:center;font:800 15px Orbitron}
+@keyframes pulse{50%{transform:scale(1.12);box-shadow:0 0 50px var(--violet)}}
+h1{font:800 24px Orbitron;text-align:center;letter-spacing:1px;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{text-align:center;color:var(--mute);font-size:14px;margin:6px 0 22px}
+.f{position:relative;margin-bottom:16px}
+.f input{width:100%;padding:16px 14px 8px;background:rgba(6,9,18,.6);border:1px solid rgba(138,151,184,.3);border-radius:12px;color:var(--text);font:500 15px 'Space Grotesk';outline:none;transition:.3s}
+.f label{position:absolute;left:14px;top:14px;color:var(--mute);font-size:14px;pointer-events:none;transition:.25s}
+.f input:focus,.f input:not(:placeholder-shown){padding-top:20px;padding-bottom:6px}
+.f input:focus+label,.f input:not(:placeholder-shown)+label{top:5px;font-size:11px;color:var(--cyan)}
+.f input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(77,225,255,.15),0 0 20px rgba(77,225,255,.25)}
+.f.bad input{border-color:var(--pink)}
+.err{display:none;color:var(--pink);font-size:12px;margin:4px 4px 0}
+.f.bad .err{display:block}
+button{width:100%;margin-top:6px;padding:15px;border:0;border-radius:12px;font:800 14px Orbitron;letter-spacing:1px;color:#060912;cursor:pointer;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink));background-size:200%;transition:.4s}
+button:hover{background-position:100%;transform:translateY(-2px);box-shadow:0 8px 30px rgba(139,92,255,.5)}
+button:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.out{display:none;text-align:center}
+.scan{height:3px;margin:20px 0;border-radius:3px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);background-size:50%;background-repeat:no-repeat;animation:scan 1.1s linear infinite}
+@keyframes scan{from{background-position:-50%}to{background-position:150%}}
+.res{display:none;text-align:left;margin-top:18px}
+.res p{padding:10px 0;border-bottom:1px solid rgba(138,151,184,.2);display:flex;justify-content:space-between;gap:12px;animation:rise .6s both}
+.res span{color:var(--mute)}
+.res b{font-weight:500;color:var(--cyan);text-align:right;word-break:break-all}
+.back{background:transparent;color:var(--cyan);border:1px solid var(--cyan);margin-top:20px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<main class="card">
+  <section id="formView">
+    <div class="orb">
+      <svg viewBox="0 0 110 110">
+        <circle class="ring r1" cx="55" cy="55" r="52"/>
+        <circle class="ring r2" cx="55" cy="55" r="45"/>
+        <circle class="prog" id="prog" cx="55" cy="55" r="48"/>
+      </svg>
+      <div class="core" id="pct">0%</div>
+    </div>
+    <h1>NOVA ID</h1>
+    <p class="sub">Apni basic details bharo, profile ban jayegi.</p>
+
+    <form id="form" novalidate>
+      <div class="f"><input id="name" placeholder=" " autocomplete="name"><label for="name">Poora naam</label><div class="err">Naam kam se kam 2 akshar ka ho.</div></div>
+      <div class="f"><input id="email" type="email" placeholder=" " autocomplete="email"><label for="email">Email</label><div class="err">Sahi email daalo.</div></div>
+      <div class="f"><input id="phone" type="tel" placeholder=" " autocomplete="tel"><label for="phone">Mobile number</label><div class="err">10 digit ka number daalo.</div></div>
+      <div class="f"><input id="city" placeholder=" " autocomplete="address-level2"><label for="city">Sheher</label><div class="err">Sheher ka naam daalo.</div></div>
+      <button type="submit">Profile banao</button>
+    </form>
+  </section>
+
+  <section class="out" id="outView">
+    <h1 id="outTitle">Scan ho raha hai...</h1>
+    <div class="scan" id="scan"></div>
+    <div class="res" id="res"></div>
+    <button class="back" id="back" style="display:none">Naya profile</button>
+  </section>
+</main>
+
+<script>
+// ---------- Particle background ----------
+const cv = document.getElementById('bg'), cx = cv.getContext('2d');
+let W, H, pts = [], mouse = {x: -999, y: -999};
+function resize(){ W = cv.width = innerWidth; H = cv.height = innerHeight;
+  pts = Array.from({length: Math.min(90, W/14)}, () => ({x: Math.random()*W, y: Math.random()*H, vx: (Math.random()-.5)*.5, vy: (Math.random()-.5)*.5})); }
+addEventListener('resize', resize); resize();
+addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+(function draw(){
+  cx.clearRect(0, 0, W, H);
+  for (const p of pts){
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0 || p.x > W) p.vx *= -1;
+    if (p.y < 0 || p.y > H) p.vy *= -1;
+    cx.fillStyle = 'rgba(77,225,255,.8)'; cx.fillRect(p.x, p.y, 2, 2);
+  }
+  for (let i = 0; i < pts.length; i++){
+    for (let j = i+1; j < pts.length; j++){
+      const d = Math.hypot(pts[i].x-pts[j].x, pts[i].y-pts[j].y);
+      if (d < 120){ cx.strokeStyle = `rgba(139,92,255,${.35*(1-d/120)})`; cx.beginPath(); cx.moveTo(pts[i].x, pts[i].y); cx.lineTo(pts[j].x, pts[j].y); cx.stroke(); }
+    }
+    const m = Math.hypot(pts[i].x-mouse.x, pts[i].y-mouse.y);
+    if (m < 160){ cx.strokeStyle = `rgba(255,79,216,${.6*(1-m/160)})`; cx.beginPath(); cx.moveTo(pts[i].x, pts[i].y); cx.lineTo(mouse.x, mouse.y); cx.stroke(); }
+  }
+  requestAnimationFrame(draw);
+})();
+
+// ---------- Form logic ----------
+const rules = {
+  name:  v => v.trim().length >= 2,
+  email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+  phone: v => /^\d{10}$/.test(v.replace(/\D/g, '')),
+  city:  v => v.trim().length >= 2
+};
+const ids = Object.keys(rules), $ = id => document.getElementById(id);
+
+function updateProgress(){
+  const ok = ids.filter(id => rules[id]($(id).value)).length;
+  const pct = Math.round(ok / ids.length * 100);
+  $('prog').style.strokeDashoffset = 302 - 302 * pct / 100;
+  $('pct').textContent = pct + '%';
+}
+ids.forEach(id => $(id).addEventListener('input', () => { $(id).parentElement.classList.remove('bad'); updateProgress(); }));
+
+$('form').addEventListener('submit', e => {
+  e.preventDefault();
+  let valid = true;
+  ids.forEach(id => { const good = rules[id]($(id).value); $(id).parentElement.classList.toggle('bad', !good); if (!good) valid = false; });
+  if (!valid) return;
+
+  const data = {Naam: $('name').value.trim(), Email: $('email').value.trim(), Mobile: $('phone').value.trim(), Sheher: $('city').value.trim()};
+  $('formView').style.display = 'none';
+  $('outView').style.display = 'block';
+  $('outTitle').textContent = 'Scan ho raha hai...';
+  $('scan').style.display = 'block'; $('res').style.display = 'none'; $('back').style.display = 'none';
+
+  setTimeout(() => {
+    $('outTitle').textContent = 'Profile ready';
+    $('scan').style.display = 'none';
+    $('res').innerHTML = Object.entries(data).map(([k, v], i) => `<p style="animation-delay:${i*.15}s"><span>${k}</span><b></b></p>`).join('');
+    [...$('res').querySelectorAll('b')].forEach((b, i) => b.textContent = Object.values(data)[i]);
+    $('res').style.display = 'block'; $('back').style.display = 'block';
+    // Yahan apna backend/API call laga sakte ho: fetch('/api', {method:'POST', body: JSON.stringify(data)})
+  }, 1800);
+});
+
+$('back').addEventListener('click', () => {
+  $('form').reset(); updateProgress();
+  $('outView').style.display = 'none'; $('formView').style.display = 'block';
+});
+</script>
+</body>
+</html>
